@@ -1,35 +1,43 @@
+```
+# Dependencies
+node_modules/
 __pycache__/
 *.pyc
 *.pyo
-*.egg-info/
-dist/
-build/
-*.egg
-
-cache/
-*.data
-*.pkl
-
-.ipynb_checkpoints/
-*.mp3
-
-# Environment / secrets
-.env
+*.pyd
 .venv/
 venv/
-env/
+.env
+.env.local
+.env.*
 
-# IDE
+# Build artifacts
+dist/
+build/
+target/
+*.so
+*.egg-info/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE specific
 .vscode/
 .idea/
+*.swp
+*.swo
+*.tmp
 
-# Training artifacts
-lightning_logs/
-wandb/
+# Coverage
+.coverage
+coverage/
+htmlcov/
 
-# Testing / type-checking
-.pytest_cache/
+# Testing
 .mypy_cache/
-
-# OS
-.DS_Store
+.pytest_cache/
+```

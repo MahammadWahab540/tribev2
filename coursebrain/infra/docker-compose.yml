@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: coursebrain
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  api:
+    build:
+      context: ../services/api
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/coursebrain
+      REDIS_URL: redis://redis:6379/0
+      STORAGE_PATH: /app/storage
+      TRIBE_CACHE_FOLDER: /app/cache
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../services/api:/app
+      - storage_data:/app/storage
+      - cache_data:/app/cache
+    depends_on:
+      - postgres
+      - redis
+
+  worker:
+    build:
+      context: ../services/api
+      dockerfile: Dockerfile
+    command: celery -A app.main.celery_app worker --loglevel=info --concurrency=1
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/coursebrain
+      REDIS_URL: redis://redis:6379/0
+      STORAGE_PATH: /app/storage
+      TRIBE_CACHE_FOLDER: /app/cache
+    volumes:
+      - ../services/api:/app
+      - storage_data:/app/storage
+      - cache_data:/app/cache
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  postgres_data:
+  redis_data:
+  storage_data:
+  cache_data:
