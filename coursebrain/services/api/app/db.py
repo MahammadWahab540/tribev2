@@ -3,11 +3,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 import uuid
+from app.config import settings
 
 Base = declarative_base()
 
 engine = create_engine(
-    "postgresql://postgres:postgres@localhost:5432/coursebrain",
+    settings.DATABASE_URL,
     echo=False,
     pool_pre_ping=True,
 )

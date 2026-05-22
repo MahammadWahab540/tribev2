@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from app.db import get_db, Upload, AnalysisJob
 from app.schemas import CreateJobRequest, JobStatusResponse
@@ -8,14 +8,13 @@ router = APIRouter(prefix="/analysis-jobs", tags=["analysis-jobs"])
 
 
 @router.post("", response_model=JobStatusResponse)
-async def create_analysis_job(request: CreateJobRequest, db: Session = None):
+async def create_analysis_job(
+    request: CreateJobRequest, db: Session = Depends(get_db)
+):
     """
     Create a new analysis job for an uploaded video.
     The job will be processed asynchronously by a Celery worker.
     """
-    if db is None:
-        db = next(get_db())
-
     # Verify upload exists
     upload = db.query(Upload).filter(Upload.id == request.upload_id).first()
     if not upload:
@@ -48,13 +47,10 @@ async def create_analysis_job(request: CreateJobRequest, db: Session = None):
 
 
 @router.get("/{job_id}", response_model=JobStatusResponse)
-async def get_job_status(job_id: str, db: Session = None):
+async def get_job_status(job_id: str, db: Session = Depends(get_db)):
     """
     Get the status of an analysis job.
     """
-    if db is None:
-        db = next(get_db())
-
     job = db.query(AnalysisJob).filter(AnalysisJob.id == job_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")

@@ -28,6 +28,15 @@ services:
       REDIS_URL: redis://redis:6379/0
       STORAGE_PATH: /app/storage
       TRIBE_CACHE_FOLDER: /app/cache
+      ENABLE_TRIBE: "false"
+      ENABLE_LLM: "false"
+      ENABLE_OCR: "false"
+      MOCK_ANALYSIS: "true"
+      TASK_TIME_LIMIT_SECONDS: "3600"
+      MAX_VIDEO_DURATION_SECONDS: "1800"
+      VIDEO_SAMPLE_INTERVAL: "5.0"
+      TRANSCRIPT_WINDOW_SIZE: "30"
+      CORS_ORIGINS: "http://localhost:3000"
     ports:
       - "8000:8000"
     volumes:
@@ -42,12 +51,20 @@ services:
     build:
       context: ../services/api
       dockerfile: Dockerfile
-    command: celery -A app.main.celery_app worker --loglevel=info --concurrency=1
+    command: celery -A app.celery_app.celery_app worker --loglevel=info --concurrency=1
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/coursebrain
       REDIS_URL: redis://redis:6379/0
       STORAGE_PATH: /app/storage
       TRIBE_CACHE_FOLDER: /app/cache
+      ENABLE_TRIBE: "false"
+      ENABLE_LLM: "false"
+      ENABLE_OCR: "false"
+      MOCK_ANALYSIS: "true"
+      TASK_TIME_LIMIT_SECONDS: "3600"
+      MAX_VIDEO_DURATION_SECONDS: "1800"
+      VIDEO_SAMPLE_INTERVAL: "5.0"
+      TRANSCRIPT_WINDOW_SIZE: "30"
     volumes:
       - ../services/api:/app
       - storage_data:/app/storage

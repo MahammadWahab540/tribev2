@@ -97,6 +97,8 @@ class Metrics(BaseModel):
 
 
 class ReportResponse(BaseModel):
+    upload_id: str
+    video_url: str
     coursebrain_score: float
     summary: str
     disclaimer: str
